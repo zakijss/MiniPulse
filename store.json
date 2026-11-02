@@ -1,0 +1,16 @@
+{
+  "name": "MiniPulse",
+  "folder": "MiniPulse",
+  "desc": "Internet speed over Wi-Fi: latency, download, upload",
+  "repo": "zakijss/MiniPulse",
+  "license": "MIT",
+  "version": "__VERSION__",
+  "zip": "https://github.com/zakijss/MiniPulse/releases/download/v__VERSION__/minipulse-__VERSION__.zip",
+  "sha256": "__SHA256__",
+  "size": __SIZE__,
+  "strip": "App/",
+  "released": "__RELEASED__",
+  "facts": [
+    "Runs only while open; history stays on the card."
+  ]
+}

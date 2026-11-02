@@ -1,0 +1,6 @@
+{
+	"label":	"MiniPulse",
+	"icon":	"/mnt/SDCARD/App/MiniPulse/icon.png",
+	"launch":	"launch.sh",
+	"description":	"Internet speed: latency, download, upload"
+}
