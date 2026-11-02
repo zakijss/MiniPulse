@@ -250,7 +250,10 @@ func (a *app) history() {
 		case ui.B, ui.Menu:
 			return
 		case ui.Y:
-			if len(a.hist) > 0 && !ev.Repeat {
+			// Asks first, like Clear all: one stray press used to remove a
+			// result with no way back.
+			if len(a.hist) > 0 && !ev.Repeat && s.Confirm(a.input, "Delete this result?",
+				"The test from "+a.hist[l.Sel].When.Local().Format("Jan 2 15:04")+" will be removed.", "Delete") {
 				a.hist = slices.Delete(a.hist, l.Sel, l.Sel+1)
 				a.saveHistory()
 			}

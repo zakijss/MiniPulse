@@ -3,7 +3,7 @@ module github.com/zakijss/minipulse
 go 1.27
 
 require (
-	github.com/zakijss/minideck v1.0.0
+	github.com/zakijss/minideck v1.0.1
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20261020153306-9f2b28d4331a
 )
 
