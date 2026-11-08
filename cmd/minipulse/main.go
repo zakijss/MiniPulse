@@ -548,9 +548,9 @@ func humanize(err error) error {
 	case strings.Contains(msg, "connection refused"):
 		hint = "The server refused the connection: check its address and port."
 	case strings.Contains(msg, "timeout") || strings.Contains(msg, "deadline exceeded"):
-		hint = "The server took too long to answer."
+		hint = "The server took too long to answer: try again, or pick another server in Settings."
 	case strings.Contains(msg, "certificate"):
-		hint = "The server's certificate isn't valid (or the Miyoo's clock is wrong)."
+		hint = "The server's certificate isn't valid. Check that the Miyoo's clock is right."
 	default:
 		return err
 	}

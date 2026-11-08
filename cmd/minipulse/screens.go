@@ -106,7 +106,7 @@ func (a *app) settings() {
 				change(&a.set, r, step)
 				if err := a.st.save("settings.json", a.set); err != nil {
 					a.set = old
-					s.Notice(a.input, "Couldn't save", err.Error())
+					s.Notice(a.input, "Couldn't save", err.Error()+". Check that the card has free space.")
 				}
 				continue
 			}
@@ -220,7 +220,7 @@ func (a *app) history() {
 	for {
 		if len(a.hist) == 0 {
 			top := s.StaticFrame("History", "No tests yet", ui.Hint{Button: "B", Label: "Back"})
-			msg := "Results of your tests show up here, newest first."
+			msg := "Tests you run with A show up here, newest first."
 			s.TextCenter(ui.W/2, top+120, msg, ui.Body, ui.Muted)
 			s.Present()
 		} else {
@@ -276,7 +276,7 @@ func (a *app) saveHistory() {
 		a.last = Live{Phase: PhaseDone, Down: a.shown.DownS, Up: a.shown.UpS, Result: a.shown}
 	}
 	if err := a.st.save("history.json", a.hist); err != nil {
-		a.scr.Notice(a.input, "Couldn't save", err.Error())
+		a.scr.Notice(a.input, "Couldn't save", err.Error()+". Check that the card has free space.")
 	}
 }
 
