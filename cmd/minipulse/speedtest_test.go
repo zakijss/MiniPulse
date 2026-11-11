@@ -206,3 +206,23 @@ func TestSteadyPeak(t *testing.T) {
 		t.Error("no samples")
 	}
 }
+
+// A new result is compared with the median of the earlier ones, once
+// there are three.
+func TestVsUsual(t *testing.T) {
+	a := &app{hist: []Result{{Down: 50}, {Down: 100}}}
+	if got := a.vsUsual(Result{Down: 80}); got != "" {
+		t.Errorf("two earlier results: %q, want nothing", got)
+	}
+	a.hist = append(a.hist, Result{Down: 200})
+	for down, want := range map[float64]string{
+		120: "Download 20% faster than your usual 100 Mbit/s",
+		50:  "Download 50% slower than your usual 100 Mbit/s",
+		95:  "Download about your usual 100 Mbit/s",
+		0:   "",
+	} {
+		if got := a.vsUsual(Result{Down: down}); got != want {
+			t.Errorf("%v Mbit/s: %q, want %q", down, got, want)
+		}
+	}
+}

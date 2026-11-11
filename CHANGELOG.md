@@ -6,6 +6,16 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- A finished test says how its download compares with your usual: the median of your earlier tests, once there are three.
+- History: A shows a result on the main screen with its graphs, and START runs a new test.
+- History: L2 and R2 jump to the newest and oldest result.
+
+### Changed
+
+- After an error, the footer reads A Retry and the error says to press A.
+
 ## [1.0.2] - 2026-11-08
 
 ### Changed

@@ -166,6 +166,7 @@ func (a *app) finished(r Result) {
 	r.DownS, r.UpS = round1(l.Down), round1(l.Up)
 	a.shown, a.hasShown = r, true
 	a.last = l
+	a.note = a.vsUsual(r)
 	a.hist = addResult(a.hist, r)
 	if err := a.st.save("history.json", a.hist); err != nil {
 		a.note = "Couldn't save the result: " + err.Error()
@@ -255,7 +256,11 @@ func (a *app) hints() []ui.Hint {
 	if a.running() {
 		return []ui.Hint{{Button: "A", Label: "Stop"}}
 	}
-	return []ui.Hint{{Button: "A", Label: "Start"}, {Button: "Y", Label: "Settings"},
+	start := "Start"
+	if a.failed != nil {
+		start = "Retry" // "Try again" doesn't fit beside four more
+	}
+	return []ui.Hint{{Button: "A", Label: start}, {Button: "Y", Label: "Settings"},
 		{Button: "X", Label: "History"}, ui.AppearanceHint, {Button: "B", Label: "Exit"}}
 }
 
@@ -433,7 +438,11 @@ func (a *app) drawGraphs(g image.Rectangle, l Live) {
 	if a.failed != nil && !a.running() {
 		s.Text(g.Min.X+18, g.Min.Y+14, "The test didn't finish", ui.Heading, ui.Text)
 		y := g.Min.Y + 18 + ui.LineHeight(ui.Heading)
-		for _, line := range ui.Wrap(ui.Small, a.failed.Error(), g.Dx()-36) {
+		msg := a.failed.Error()
+		if !strings.HasSuffix(msg, ".") {
+			msg += "."
+		}
+		for _, line := range ui.Wrap(ui.Small, msg+" Press A to try again.", g.Dx()-36) {
 			if y+ui.LineHeight(ui.Small) > g.Max.Y-8 {
 				break
 			}
@@ -555,6 +564,28 @@ func humanize(err error) error {
 		return err
 	}
 	return fmt.Errorf("%s (%s)", hint, msg)
+}
+
+// vsUsual compares a new result's download with the median of the earlier
+// ones, once there are three to compare with: a one-off reading means
+// little without the usual beside it.
+func (a *app) vsUsual(r Result) string {
+	if len(a.hist) < 3 || r.Down <= 0 {
+		return ""
+	}
+	usual := median(a.hist, func(r Result) float64 { return r.Down })
+	if usual <= 0 {
+		return ""
+	}
+	pct := math.Round((r.Down/usual - 1) * 100)
+	u := a.mbps(usual) + " " + a.set.unit()
+	switch {
+	case pct >= 10:
+		return fmt.Sprintf("Download %.0f%% faster than your usual %s", pct, u)
+	case pct <= -10:
+		return fmt.Sprintf("Download %.0f%% slower than your usual %s", -pct, u)
+	}
+	return "Download about your usual " + u
 }
 
 // round1 keeps a tenth of a Mbit/s: plenty for a graph, and short in JSON.

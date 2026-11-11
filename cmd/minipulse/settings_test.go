@@ -124,3 +124,16 @@ func TestTestUsesSettings(t *testing.T) {
 		t.Errorf("test plan %+v", plan)
 	}
 }
+
+// In History, R2 jumps to the oldest result and A shows it on the main
+// screen.
+func TestHistoryShow(t *testing.T) {
+	scr, _ := lookScreen(t)
+	h := []Result{{When: time.Now(), Down: 10}, {When: time.Now().Add(-time.Hour), Down: 20}, {When: time.Now().Add(-2 * time.Hour), Down: 30}}
+	a := &app{scr: scr, st: store{dir: t.TempDir()}, changed: make(chan struct{}, 1), hist: h,
+		input: presses(ui.X, ui.R2, ui.A)}
+	a.run()
+	if !a.hasShown || a.shown.Down != 30 {
+		t.Errorf("shown %+v, want the oldest result", a.shown)
+	}
+}

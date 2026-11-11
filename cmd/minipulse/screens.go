@@ -213,14 +213,15 @@ func (a *app) saveSettings() {
 	}
 }
 
-// history lists past results, newest first.
+// history lists past results, newest first. A shows one on the main
+// screen, START runs a new test, L2 and R2 jump to the newest and oldest.
 func (a *app) history() {
 	s := a.scr
 	var l ui.List
 	for {
 		if len(a.hist) == 0 {
-			top := s.StaticFrame("History", "No tests yet", ui.Hint{Button: "B", Label: "Back"})
-			msg := "Tests you run with A show up here, newest first."
+			top := s.StaticFrame("History", "No tests yet", ui.Hint{Button: "START", Label: "Test"}, ui.Hint{Button: "B", Label: "Back"})
+			msg := "Tests you run with A or START show up here, newest first."
 			s.TextCenter(ui.W/2, top+120, msg, ui.Body, ui.Muted)
 			s.Present()
 		} else {
@@ -234,8 +235,8 @@ func (a *app) history() {
 			sub := fmt.Sprintf("%s · %s, median ↓ %s  ↑ %s", plural(len(a.hist), "test"), a.set.unit(),
 				orDash(a.mbps(median(a.hist, func(r Result) float64 { return r.Down }))),
 				orDash(a.mbps(median(a.hist, func(r Result) float64 { return r.Up }))))
-			top := s.StaticFrame("History", sub, ui.Hint{Button: "Y", Label: "Delete"},
-				ui.Hint{Button: "X", Label: "Clear all"}, ui.Hint{Button: "B", Label: "Back"})
+			top := s.StaticFrame("History", sub, ui.Hint{Button: "A", Label: "Show"}, ui.Hint{Button: "Y", Label: "Delete"},
+				ui.Hint{Button: "X", Label: "Clear all"}, ui.Hint{Button: "START", Label: "Test"}, ui.Hint{Button: "B", Label: "Back"})
 			l.Draw(s, image.Rect(20, top, ui.W-26, ui.H-58))
 			s.Present()
 		}
@@ -249,6 +250,18 @@ func (a *app) history() {
 		switch ev.Button {
 		case ui.B, ui.Menu:
 			return
+		case ui.Start:
+			a.start()
+			return
+		case ui.A:
+			if len(a.hist) > 0 {
+				a.show(a.hist[l.Sel])
+				return
+			}
+		case ui.L2:
+			l.Sel = 0
+		case ui.R2:
+			l.Sel = max(0, len(a.hist)-1)
 		case ui.Y:
 			// Asks first, like Clear all: one stray press used to remove a
 			// result with no way back.
@@ -266,6 +279,14 @@ func (a *app) history() {
 			l.Handle(ev)
 		}
 	}
+}
+
+// show puts a past result on the main screen, with its graphs, and says
+// when it ran until the next press.
+func (a *app) show(r Result) {
+	a.shown, a.hasShown, a.failed = r, true, nil
+	a.last = Live{Phase: PhaseDone, Down: r.DownS, Up: r.UpS, Result: r}
+	a.note = "Showing the test from " + r.When.Local().Format("Jan 2 15:04")
 }
 
 func (a *app) saveHistory() {
