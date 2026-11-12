@@ -6,6 +6,12 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-11-12
+
+### Changed
+
+- Reaches the WireGuard and NetBird networks MiniScale 1.2 can join, through its proxy (MiniDeck 1.1.0).
+
 ## [1.1.0] - 2026-11-12
 
 ### Added
@@ -41,7 +47,8 @@ All notable changes are listed here. The format follows
 
 - The first release: Cloudflare, LibreSpeed and OpenSpeedTest servers, a history, and settings for the test length, the number of connections and Mbit/s or MB/s.
 
-[Unreleased]: https://github.com/zakijss/MiniPulse/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/zakijss/MiniPulse/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/zakijss/MiniPulse/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/zakijss/MiniPulse/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/zakijss/MiniPulse/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/zakijss/MiniPulse/compare/v1.0.0...v1.0.1
