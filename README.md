@@ -19,9 +19,9 @@ Latency, jitter, download and upload speed over the Miyoo Mini Plus's Wi-Fi. Par
 
 **A** starts and stops a test and **X** opens the history. **Y** opens the settings: the server, the test length (5, 10 or 20 seconds each way), the connections (1, 3 or 6) and Mbit/s or MB/s.
 
-A finished test says how its download compares with your usual (the median of your earlier tests). After an error, **A** tries again.
+A finished test says how its download compares with your usual (the median of your earlier tests against the same server). The Wi-Fi signal in the subtitle updates every two seconds, so you can walk around to find a better spot before testing. After an error, **A** tries again.
 
-In the history, **A** shows a result on the main screen with its graphs, **START** runs a new test, **Y** deletes a result, **X** clears them all, and **L2** and **R2** jump to the newest and oldest.
+The history's medians are those of the selected result's server. In the history, **A** shows a result on the main screen with its graphs, **START** runs a new test, **Y** deletes a result, **X** clears them all, and **L2** and **R2** jump to the newest and oldest.
 
 ## Install
 
