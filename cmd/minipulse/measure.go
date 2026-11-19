@@ -123,9 +123,13 @@ func (t *Test) set(f func(*Live)) {
 // Run does the whole test; cancel ctx to stop it.
 func (t *Test) Run(ctx context.Context) Result {
 	res := Result{When: time.Now(), Server: t.srv.Name()}
-	if w, err := t.srv.Locate(ctx, t.client); err == nil {
+	// The client has no overall timeout: a server that takes the request
+	// and never answers would hold the test here until stopped.
+	lctx, cancel := context.WithTimeout(ctx, locateTimeout)
+	if w, err := t.srv.Locate(lctx, t.client); err == nil {
 		res.Where = w
 	}
+	cancel()
 	t.set(func(l *Live) { l.Phase, l.Result = PhasePing, res })
 	ping, jitter, loss, err := t.latency(ctx)
 	if err != nil {
@@ -157,6 +161,10 @@ func (t *Test) fail(res Result, err error) Result {
 }
 
 var errStopped = errors.New("stopped")
+
+// locateTimeout is how long finding where the server is may take; the
+// test goes on without the location after it.
+const locateTimeout = 5 * time.Second
 
 // latency times small requests on one warm connection: the time to the
 // first byte of an empty response, minus what the server says it spent.

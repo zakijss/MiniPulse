@@ -174,6 +174,10 @@ func (a *app) finished(r Result) {
 }
 
 func (a *app) run() {
+	// Redraws now and then while idle, so the Wi-Fi signal and "Last test
+	// … ago" stay current.
+	tick := time.NewTicker(2 * time.Second)
+	defer tick.Stop()
 	for {
 		a.draw()
 		var done chan Result
@@ -219,6 +223,7 @@ func (a *app) run() {
 		case r := <-done:
 			a.finished(r)
 		case <-a.changed:
+		case <-tick.C:
 		}
 	}
 }
@@ -567,13 +572,15 @@ func humanize(err error) error {
 }
 
 // vsUsual compares a new result's download with the median of the earlier
-// ones, once there are three to compare with: a one-off reading means
-// little without the usual beside it.
+// ones against the same server, once there are three to compare with: a
+// one-off reading means little without the usual beside it, and a server
+// at home says nothing about one across the internet.
 func (a *app) vsUsual(r Result) string {
-	if len(a.hist) < 3 || r.Down <= 0 {
+	same := sameServer(a.hist, r.Server)
+	if len(same) < 3 || r.Down <= 0 {
 		return ""
 	}
-	usual := median(a.hist, func(r Result) float64 { return r.Down })
+	usual := median(same, func(r Result) float64 { return r.Down })
 	if usual <= 0 {
 		return ""
 	}

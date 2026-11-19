@@ -232,10 +232,14 @@ func (a *app) history() {
 			if l.Sel >= len(l.Items) {
 				l.Sel = len(l.Items) - 1
 			}
-			sub := fmt.Sprintf("%s · %s, median ↓ %s  ↑ %s", plural(len(a.hist), "test"), a.set.unit(),
-				orDash(a.mbps(median(a.hist, func(r Result) float64 { return r.Down }))),
-				orDash(a.mbps(median(a.hist, func(r Result) float64 { return r.Up }))))
-			top := s.StaticFrame("History", sub, ui.Hint{Button: "A", Label: "Show"}, ui.Hint{Button: "Y", Label: "Delete"},
+			// the medians are the selected result's server's: speeds to
+			// different servers don't mix
+			srv := a.hist[max(l.Sel, 0)].Server
+			same := sameServer(a.hist, srv)
+			sub := fmt.Sprintf("%s · %s median ↓ %s  ↑ %s %s", plural(len(a.hist), "test"), srv,
+				orDash(a.mbps(median(same, func(r Result) float64 { return r.Down }))),
+				orDash(a.mbps(median(same, func(r Result) float64 { return r.Up }))), a.set.unit())
+			top := s.StaticFrame("History", ui.Fit(ui.Small, sub, ui.W-60), ui.Hint{Button: "A", Label: "Show"}, ui.Hint{Button: "Y", Label: "Delete"},
 				ui.Hint{Button: "X", Label: "Clear all"}, ui.Hint{Button: "START", Label: "Test"}, ui.Hint{Button: "B", Label: "Back"})
 			l.Draw(s, image.Rect(20, top, ui.W-26, ui.H-58))
 			s.Present()
@@ -327,6 +331,17 @@ func orDash(s string) string {
 		return "–"
 	}
 	return s
+}
+
+// sameServer is the results in h against the server named srv.
+func sameServer(h []Result, srv string) []Result {
+	var out []Result
+	for _, r := range h {
+		if r.Server == srv {
+			out = append(out, r)
+		}
+	}
+	return out
 }
 
 func median(h []Result, f func(Result) float64) float64 {

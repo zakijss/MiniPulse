@@ -225,4 +225,32 @@ func TestVsUsual(t *testing.T) {
 			t.Errorf("%v Mbit/s: %q, want %q", down, got, want)
 		}
 	}
+	// results against another server aren't the usual
+	if got := a.vsUsual(Result{Server: "nas.local", Down: 300}); got != "" {
+		t.Errorf("another server: %q, want nothing", got)
+	}
+}
+
+// slowLocate is a server that never says where it is.
+type slowLocate struct{ selfHosted }
+
+func (slowLocate) Locate(ctx context.Context, _ *http.Client) (string, error) {
+	<-ctx.Done()
+	return "", ctx.Err()
+}
+
+// A server that doesn't answer where it is doesn't hold the test up.
+func TestLocateTimesOut(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	defer srv.Close()
+	plan := Plan{Pings: 1, Duration: 300 * time.Millisecond, Streams: 1, DownChunk: 1 << 10, UpChunk: 1 << 10}
+	test := NewTest(slowLocate{selfHosted{base: srv.URL + "/", kind: "librespeed"}}, plan, newClient(), nil)
+	start := time.Now()
+	test.Run(context.Background())
+	if d := time.Since(start); d > locateTimeout+3*time.Second {
+		t.Errorf("took %v", d)
+	}
+	if l := test.Live(); l.Phase != PhaseDone {
+		t.Errorf("live %+v", l)
+	}
 }
