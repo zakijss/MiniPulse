@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/hero.jpg" alt="A clear purple Miyoo Mini Plus on a stand on a sunlit window sill, showing a finished speed test in MiniPulse, with a white one and a grey one lying beside it" width="100%"></p>
+<p align="center"><img src="docs/hero.jpg" alt="A clear purple Miyoo Mini Plus on a red stand showing a finished speed test in MiniPulse, on a concrete bench at a kart track, with a white one, a digital watch and a flask" width="100%"></p>
 
 [![CI](https://github.com/zakijss/MiniPulse/actions/workflows/ci.yml/badge.svg)](https://github.com/zakijss/MiniPulse/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/zakijss/MiniPulse)](https://github.com/zakijss/MiniPulse/releases)
@@ -13,7 +13,7 @@ Latency, jitter, download and upload speed over the Miyoo Mini Plus's Wi-Fi. Par
 - Says how a download compares with your usual: the median of your earlier tests against the same server.
 - Keeps the last 50 results.
 
-<p align="center"><img src="docs/desk.jpg" alt="A clear purple Miyoo Mini Plus on a stand on a sunlit window sill, showing a finished speed test in MiniPulse, with a white one beside it showing past tests" width="100%"></p>
+<p align="center"><img src="docs/desk.jpg" alt="Close up: a grey Miyoo Mini Plus on a red stand measuring download speed in MiniPulse, at a kart track" width="100%"></p>
 
 ## Install
 
